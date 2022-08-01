@@ -3,6 +3,7 @@ name: Docker Build and Push
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -32,4 +33,4 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true # optional, default is false
         # List of tags
-        tags: tzk223/twitter-bot:$(date +%s), tzk223/twitter-bot:latest # optional
+        tags: tzk223/twitter-bot:$(date +'%Y%m%d'), tzk223/twitter-bot:latest # optional
