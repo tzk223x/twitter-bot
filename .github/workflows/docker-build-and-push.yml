@@ -24,7 +24,7 @@ jobs:
 
     - name: Get current date
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y%m%d')"
 
     - name: Build and push Docker images
       # You may pin to the exact commit or the version.
@@ -37,4 +37,5 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true # optional, default is false
         # List of tags
-        tags: tzk223/twitter-bot:${{ steps.date.outputs.date }}, tzk223/twitter-bot:latest # optional
+        #tzk223/twitter-bot:${{ steps.date.outputs.date }}, 
+        tags: tzk223/twitter-bot:latest # optional
