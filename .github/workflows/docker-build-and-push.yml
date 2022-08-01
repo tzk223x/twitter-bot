@@ -37,4 +37,5 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true # optional, default is false
         # List of tags
-        tags: tzk223/twitter-bot:${{ steps.date.outputs.date }}, tzk223/twitter-bot:latest # optional
+        #tzk223/twitter-bot:${{ steps.date.outputs.date }}, 
+        tags: tzk223/twitter-bot:latest # optional
