@@ -56,7 +56,7 @@ if args.twitter_bearer_token:
 else:
     TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
 
-def main(discord_webhook_url, twitter_bearer_token):
+def main(discord_webhook_url, twitter_bearer_token, stream_rule_values):
     """Main routine"""
 
     logging.info("Creating Discord webhook...")
@@ -75,9 +75,11 @@ def main(discord_webhook_url, twitter_bearer_token):
             tweepy_streaming_client.delete_rules(rule.id)
 
     logging.info("Adding desired rules...")
-    #rule = tweepy.StreamRule(value="from:GenshinImpact -is:retweet")
-    rule = tweepy.StreamRule(value="genshin -is:retweet -is:reply has:media")
-    tweepy_streaming_client.add_rules(rule)
+    rules = []
+    for stream_rule_value in stream_rule_values:
+        rule = tweepy.StreamRule(value=stream_rule_value)
+        rules.append(rule)
+    tweepy_streaming_client.add_rules(rules)
     rules = tweepy_streaming_client.get_rules()
     logging.debug({ "rules": rules })
 
@@ -85,4 +87,6 @@ def main(discord_webhook_url, twitter_bearer_token):
     tweepy_streaming_client.filter(tweet_fields=["created_at"], expansions="author_id")
 
 if __name__ == "__main__":
-    main(DISCORD_WEBHOOL_URL, TWITTER_BEARER_TOKEN)
+    STREAM_RULE_VALUES=["genshin -is:retweet -is:reply has:media"]
+    #STREAM_RULE_VALUES=["from:GenshinImpact -is:retweet"]
+    main(DISCORD_WEBHOOL_URL, TWITTER_BEARER_TOKEN, STREAM_RULE_VALUES)
