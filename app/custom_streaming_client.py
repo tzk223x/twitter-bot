@@ -38,7 +38,7 @@ class CustomStreamingClient(StreamingClient):
 
         discord_webhook_username = "twitter-bot"
         discord_webhook_avatar_url = ""
-        discord_webhook_content = f"{str(tweet_author_username)}"\
+        discord_webhook_content = f"{str(tweet_author_username)} "\
             f"tweeted at {tweet_datetime_pt_string}: {tweet_link}"
         logging.info(
             {
