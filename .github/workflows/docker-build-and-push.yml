@@ -22,6 +22,10 @@ jobs:
         # Password or personal access token used to log against the Docker registry
         password: ${{ secrets.DOCKER_HUB_PERSONAL_ACCESS_TOKEN }} # optional
 
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
     - name: Build and push Docker images
       # You may pin to the exact commit or the version.
       uses: docker/build-push-action@v3
@@ -33,4 +37,4 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true # optional, default is false
         # List of tags
-        tags: tzk223/twitter-bot:$(date +'%Y%m%d'), tzk223/twitter-bot:latest # optional
+        tags: tzk223/twitter-bot:${{ steps.date.outputs.date }}, tzk223/twitter-bot:latest # optional
