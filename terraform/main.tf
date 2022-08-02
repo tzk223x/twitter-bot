@@ -40,10 +40,16 @@ resource "aws_ecs_task_definition" "test" {
     "image": "registry.hub.docker.com/tzk223/twitter-bot:latest",
     "cpu": 256,
     "memory": 512,
-    "environment": {
-      DISCORD_WEBHOOK_URL: "${var.discord_webhook_url}",
-      TWITTER_BEARER_TOKEN: "${var.twitter_bearer_token}"
-    }
+    "environment": [
+      {
+        "name": "DISCORD_WEBHOOK_URL",
+        "value": "${var.discord_webhook_url}"
+      },
+      {
+        "name": "TWITTER_BEARER_TOKEN",
+        "value": "${var.twitter_bearer_token}"
+      }
+    ],
     "essential": true
   }
 ]
