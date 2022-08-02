@@ -41,8 +41,8 @@ resource "aws_ecs_task_definition" "test" {
     "cpu": 256,
     "memory": 512,
     "environment": {
-      DISCORD_WEBHOOK_URL: "${var.discord_webhook_url}",
-      TWITTER_BEARER_TOKEN: "${var.twitter_bearer_token}"
+      "DISCORD_WEBHOOK_URL": "${var.discord_webhook_url}",
+      "TWITTER_BEARER_TOKEN": "${var.twitter_bearer_token}"
     },
     "essential": true
   }
