@@ -37,9 +37,13 @@ resource "aws_ecs_task_definition" "test" {
 [
   {
     "name": "hello-world",
-    "image": "registry.hub.docker.com/library/hello-world:linux",
+    "image": "registry.hub.docker.com/tzk223/twitter-bot:latest",
     "cpu": 256,
     "memory": 512,
+    "environment": {
+      DISCORD_WEBHOOK_URL: "${var.discord_webhook_url}",
+      TWITTER_BEARER_TOKEN: "${var.twitter_bearer_token}"
+    }
     "essential": true
   }
 ]
@@ -50,5 +54,3 @@ TASK_DEFINITION
     cpu_architecture        = "X86_64"
   }
 }
-
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition#example-using-fsx_windows_file_server_volume_configuration
