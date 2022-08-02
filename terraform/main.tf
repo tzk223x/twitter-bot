@@ -19,16 +19,16 @@ provider "aws" {
   region = "us-west-2"
 }
 
-resource "aws_ecr_repository" "ecr_repository" {
-  name                 = "bar"
+resource "aws_ecr_repository" "aws_ecr_repository_01" {
+  name                 = "repo"
 
   image_scanning_configuration {
     scan_on_push = true
   }
 }
 
-resource "aws_ecs_task_definition" "test" {
-  family                   = "test"
+resource "aws_ecs_task_definition" "aws_ecs_task_definition_01" {
+  family                   = "twitter-bot"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 1024
@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "test" {
   container_definitions    = <<TASK_DEFINITION
 [
   {
-    "name": "hello-world",
+    "name": "twitter-bot",
     "image": "registry.hub.docker.com/tzk223/twitter-bot:latest",
     "cpu": 1024,
     "memory": 2048,
