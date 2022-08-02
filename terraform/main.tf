@@ -38,8 +38,8 @@ resource "aws_ecs_task_definition" "test" {
   {
     "name": "hello-world",
     "image": "registry.hub.docker.com/tzk223/twitter-bot:latest",
-    "cpu": 256,
-    "memory": 512,
+    "cpu": 1024,
+    "memory": 2048,
     "environment": [
       {
         "name": "DISCORD_WEBHOOK_URL",
