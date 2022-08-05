@@ -38,7 +38,7 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true # optional, default is false
         # List of tags
-        tags: {{ env.registry }}/{{ env.image }}:${{ steps.date.outputs.date }}, {{ env.registry }}/{{ env.image }}:latest # optional
+        tags: ${{ env.registry }}/${{ env.image }}:${{ steps.date.outputs.date }}, ${{ env.registry }}/${{ env.image }}:latest # optional
 
   update-infrastructure:
     name: 'Terraform'
@@ -76,7 +76,7 @@ jobs:
       env:
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
-        TF_VAR_container_image: {{ env.registry }}/{{ env.image }}:${{ steps.date.outputs.date }}
+        TF_VAR_container_image: ${{ env.registry }}/${{ env.image }}:${{ steps.date.outputs.date }}
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
@@ -86,4 +86,4 @@ jobs:
       env:
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
-        TF_VAR_container_image: {{ env.registry }}/{{ env.image }}:${{ steps.date.outputs.date }}
+        TF_VAR_container_image: ${{ env.registry }}/${{ env.image }}:${{ steps.date.outputs.date }}
