@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "twitter_bot" {
 [
   {
     "name": "twitter-bot",
-    "image": "registry.hub.docker.com/tzk223/twitter-bot:latest",
+    "image": "${var.container_image}",
     "cpu": 256,
     "memory": 512,
     "environment": [
