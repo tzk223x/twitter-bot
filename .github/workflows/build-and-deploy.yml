@@ -44,6 +44,7 @@ jobs:
 
   update-infrastructure:
     name: 'Terraform'
+    needs: build
     runs-on: ubuntu-latest
     environment: production
 
@@ -74,6 +75,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
+      if: github.ref != 'refs/heads/main'
       run: terraform plan -input=false
       env:
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
