@@ -41,7 +41,8 @@
 				"ms-python.vscode-pylance",
 				"hashicorp.terraform",
 				"amazonwebservices.aws-toolkit-vscode",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"github.vscode-pull-request-github"
 			]
 		}
 	},
