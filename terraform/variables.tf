@@ -12,7 +12,6 @@ variable "twitter_stream_rules" {
   type = string
 }
 
-variable "container_image" {
+variable "container_image_name" {
   type = string
-  sensitive = true
 }
