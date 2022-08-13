@@ -24,6 +24,12 @@ parser.add_argument(
     type=str
 )
 parser.add_argument(
+    "--twitter-stream-rules",
+    default="genshin -is:retweet -is:reply has:media",
+    help="Twitter filtered stream rules (https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule)",
+    type=str
+)
+parser.add_argument(
     "--debug",
     action="store_true",
     help="Set logging level to DEBUG"
@@ -47,16 +53,21 @@ logger.addHandler(console_handler)
 load_dotenv()
 
 if args.discord_webhook_url:
-    DISCORD_WEBHOOL_URL = args.discord_webhook_url
+    DISCORD_WEBHOOK_URL = args.discord_webhook_url
 else:
-    DISCORD_WEBHOOL_URL = os.getenv('DISCORD_WEBHOOK_URL')
+    DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
 
 if args.twitter_bearer_token:
     TWITTER_BEARER_TOKEN = args.twitter_bearer_token
 else:
     TWITTER_BEARER_TOKEN = os.getenv('TWITTER_BEARER_TOKEN')
 
-def main(discord_webhook_url, twitter_bearer_token, stream_rule_values):
+if args.twitter_stream_rules:
+    TWITTER_STREAM_RULES = args.twitter_stream_rules
+else:
+    TWITTER_STREAM_RULES = os.getenv('TWITTER_STREAM_RULES')
+
+def main(discord_webhook_url, twitter_bearer_token, twitter_stream_rules):
     """Main routine"""
 
     logging.info("Creating Discord webhook...")
@@ -76,8 +87,10 @@ def main(discord_webhook_url, twitter_bearer_token, stream_rule_values):
 
     logging.info("Adding desired rules...")
     rules = []
-    for stream_rule_value in stream_rule_values:
-        rule = tweepy.StreamRule(value=stream_rule_value)
+    twitter_stream_rules_array = twitter_stream_rules.split(",")
+    for twitter_stream_rule in twitter_stream_rules_array:
+        logging.info({"Stream rule": twitter_stream_rule})
+        rule = tweepy.StreamRule(value=twitter_stream_rule)
         rules.append(rule)
     tweepy_streaming_client.add_rules(rules)
     rules = tweepy_streaming_client.get_rules()
@@ -88,5 +101,5 @@ def main(discord_webhook_url, twitter_bearer_token, stream_rule_values):
 
 if __name__ == "__main__":
     #STREAM_RULE_VALUES=["genshin -is:retweet -is:reply has:media"]
-    STREAM_RULE_VALUES=["from:GenshinImpact -is:retweet -is:reply"]
-    main(DISCORD_WEBHOOL_URL, TWITTER_BEARER_TOKEN, STREAM_RULE_VALUES)
+    #STREAM_RULE_VALUES=["from:GenshinImpact -is:retweet -is:reply"]
+    main(DISCORD_WEBHOOK_URL, TWITTER_BEARER_TOKEN, TWITTER_STREAM_RULES)

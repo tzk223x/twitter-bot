@@ -19,12 +19,22 @@ provider "aws" {
   region = "us-west-2"
 }
 
-resource "aws_ecr_repository" "aws_ecr_repository_01" {
-  name                 = "repo"
+resource "aws_secretsmanager_secret" "secret_discord_webhook_url" {
+  name_prefix = "discord_webhook_url"
+}
 
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+resource "aws_secretsmanager_secret_version" "secret_version_discord_webhook_url" {
+  secret_id     = aws_secretsmanager_secret.secret_discord_webhook_url.id
+  secret_string = var.discord_webhook_url
+}
+
+resource "aws_secretsmanager_secret" "secret_twitter_bearer_token" {
+  name_prefix = "twitter_bearer_token"
+}
+
+resource "aws_secretsmanager_secret_version" "secret_version_twitter_bearer_token" {
+  secret_id     = aws_secretsmanager_secret.secret_twitter_bearer_token.id
+  secret_string = var.twitter_bearer_token
 }
 
 resource "aws_ecs_service" "twitter_bot" {
@@ -58,8 +68,8 @@ resource "aws_ecs_task_definition" "twitter_bot" {
   family                   = "twitter-bot"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = 256
+  memory                   = 512
   container_definitions    = <<TASK_DEFINITION
 [
   {
@@ -67,14 +77,14 @@ resource "aws_ecs_task_definition" "twitter_bot" {
     "image": "${var.container_image}",
     "cpu": 256,
     "memory": 512,
-    "environment": [
+    "secrets": [
       {
         "name": "DISCORD_WEBHOOK_URL",
-        "value": "${var.discord_webhook_url}"
+        "valueFrom": "${aws_secretsmanager_secret_version.secret_version_discord_webhook_url.arn}"
       },
       {
         "name": "TWITTER_BEARER_TOKEN",
-        "value": "${var.twitter_bearer_token}"
+        "valueFrom": "${aws_secretsmanager_secret_version.secret_version_twitter_bearer_token.arn}"
       }
     ],
     "essential": true
@@ -116,4 +126,25 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role" {
 
 resource "aws_ecs_cluster" "app" {
   name = "app"
+}
+
+resource "aws_iam_role_policy" "test_secretmanager_policy" {
+  name = "test_secretmanager_policy"
+  role = "${aws_iam_role.twitter_bot_task_execution_role.id}"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": "secretsmanager:GetSecretValue",
+        "Resource": "${aws_secretsmanager_secret_version.secret_version_discord_webhook_url.arn}, ${aws_secretsmanager_secret_version.secret_version_twitter_bearer_token.arn}"
+    }]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "test_instance_profile" {
+  policy_arn = data.aws_iam_policy.ecs_task_execution_role.arn
+  role = "${aws_iam_role.twitter_bot_task_execution_role.name}"
 }
