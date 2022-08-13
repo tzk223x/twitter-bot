@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Build and Deploy Application
 
 on:
   push:
@@ -23,9 +23,9 @@ jobs:
         # Password or personal access token used to log against the Docker registry
         password: ${{ secrets.DOCKER_HUB_PERSONAL_ACCESS_TOKEN }} # optional
 
-    - name: Get current date
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y%m%d')"
+    - name: Get current datetime
+      id: datetime
+      run: echo "::set-output name=datetime::$(date +'%Y%m%d-%H%M%S')"
 
     - name: Build and push Docker images
       # You may pin to the exact commit or the version.
@@ -38,7 +38,7 @@ jobs:
         # Push is a shorthand for --output=type=registry
         push: true # optional, default is false
         # List of tags
-        tags: ${{ env.registry }}/${{ env.image }}:${{ steps.date.outputs.date }}, ${{ env.registry }}/${{ env.image }}:latest # optional
+        tags: ${{ env.registry }}/${{ env.image }}:${{ steps.datetime.outputs.datetime }}, ${{ env.registry }}/${{ env.image }}:latest # optional
 
   update-infrastructure:
     name: 'Terraform'
@@ -76,7 +76,8 @@ jobs:
       env:
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
-        TF_VAR_container_image: ${{ env.registry }}/${{ env.image }}:${{ steps.date.outputs.date }}
+        TF_VAR_twitter_stream_rules: ${{ secrets.TWITTER_STREAM_RULES }}
+        TF_VAR_container_image: ${{ env.registry }}/${{ env.image }}:${{ steps.datetime.outputs.datetime }}
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
@@ -86,4 +87,5 @@ jobs:
       env:
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
-        TF_VAR_container_image: ${{ env.registry }}/${{ env.image }}:${{ steps.date.outputs.date }}
+        TF_VAR_twitter_stream_rules: ${{ secrets.TWITTER_STREAM_RULES }}
+        TF_VAR_container_image: ${{ env.registry }}/${{ env.image }}:${{ steps.datetime.outputs.datetime }}

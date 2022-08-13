@@ -77,6 +77,12 @@ resource "aws_ecs_task_definition" "twitter_bot" {
     "image": "${var.container_image}",
     "cpu": 256,
     "memory": 512,
+    "environment": [
+      {
+        "name": "TWITTER_STREAM_RULES",
+        "value": "${var.twitter_stream_rules}"
+      }
+    ],
     "secrets": [
       {
         "name": "DISCORD_WEBHOOK_URL",

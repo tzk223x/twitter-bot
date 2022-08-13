@@ -8,6 +8,10 @@ variable "twitter_bearer_token" {
   sensitive = true
 }
 
+variable "twitter_stream_rules" {
+  type = string
+}
+
 variable "container_image" {
   type = string
   sensitive = true
