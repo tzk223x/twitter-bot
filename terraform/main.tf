@@ -145,8 +145,8 @@ resource "aws_iam_role_policy" "test_secretmanager_policy" {
         "Effect": "Allow",
         "Action": "secretsmanager:GetSecretValue",
         "Resource": [
-          ${aws_secretsmanager_secret_version.secret_version_discord_webhook_url.arn},
-          ${aws_secretsmanager_secret_version.secret_version_twitter_bearer_token.arn}
+          "${aws_secretsmanager_secret_version.secret_version_discord_webhook_url.arn}",
+          "${aws_secretsmanager_secret_version.secret_version_twitter_bearer_token.arn}"
         ]
     }]
 }
