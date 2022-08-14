@@ -11,6 +11,7 @@ env:
 
 jobs:
   build:
+    name: "Build and Push Container"
     runs-on: ubuntu-latest
     outputs:
       container_image_name: ${{ env.registry }}/${{ env.image }}:${{ steps.datetime.outputs.datetime }}
@@ -42,8 +43,8 @@ jobs:
         # List of tags
         tags: ${{ env.registry }}/${{ env.image }}:${{ steps.datetime.outputs.datetime }}, ${{ env.registry }}/${{ env.image }}:latest # optional
 
-  update-infrastructure:
-    name: 'Terraform'
+  deploy:
+    name: 'Deploy to Infrastructure'
     needs: build
     runs-on: ubuntu-latest
     environment: production
