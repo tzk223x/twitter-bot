@@ -77,7 +77,9 @@ jobs:
       env:
         TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        TF_VAR_discord_webhook_avatar_url: ${{ secrets.DISCORD_WEBHOOK_AVATAR_URL }}
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        TF_VAR_discord_webhook_username: ${{ secrets.DISCORD_WEBHOOK_USERNAME }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
         TF_VAR_twitter_stream_rules: ${{ secrets.TWITTER_STREAM_RULES }}
         TF_VAR_container_image_name: ${{ needs.image_name.outputs.container_image_name }}
@@ -90,7 +92,9 @@ jobs:
       env:
         TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        TF_VAR_discord_webhook_avatar_url: ${{ secrets.DISCORD_WEBHOOK_AVATAR_URL }}
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        TF_VAR_discord_webhook_username: ${{ secrets.DISCORD_WEBHOOK_USERNAME }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
         TF_VAR_twitter_stream_rules: ${{ secrets.TWITTER_STREAM_RULES }}
         TF_VAR_container_image_name: ${{ needs.image_name.outputs.container_image_name }}
