@@ -10,53 +10,47 @@ env:
   image: "twitter-bot"
 
 jobs:
-  build:
-    name: "Build and Push Container"
+  image_name:
+    name: "Set Image Name"
     runs-on: ubuntu-latest
     outputs:
       container_image_name: ${{ env.registry }}/${{ env.image }}:${{ steps.datetime.outputs.datetime }}
+    steps:
+      - name: Get current datetime
+        id: datetime
+        run: echo "::set-output name=datetime::$(date +'%Y%m%d-%H%M%S')"
+
+  build:
+    name: "Build and Push Container"
+    needs: [ image_name ]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     
     - name: Docker Login
       uses: docker/login-action@v2
       with:
-        # Username used to log against the Docker registry
-        username: ${{ env.registry }} # optional
-        # Password or personal access token used to log against the Docker registry
-        password: ${{ secrets.DOCKER_HUB_PERSONAL_ACCESS_TOKEN }} # optional
-
-    - name: Get current datetime
-      id: datetime
-      run: echo "::set-output name=datetime::$(date +'%Y%m%d-%H%M%S')"
+        username: ${{ env.registry }}
+        password: ${{ secrets.DOCKER_HUB_PERSONAL_ACCESS_TOKEN }}
 
     - name: Build and push Docker images
-      # You may pin to the exact commit or the version.
       uses: docker/build-push-action@v3
       with:
-        # Build's context is the set of files located in the specified PATH or URL
-        context: . # optional
-        # Do not use cache when building the image
-        no-cache: true # optional, default is false
-        # Push is a shorthand for --output=type=registry
-        push: true # optional, default is false
-        # List of tags
-        tags: ${{ env.registry }}/${{ env.image }}:${{ steps.datetime.outputs.datetime }}, ${{ env.registry }}/${{ env.image }}:latest # optional
+        context: .
+        no-cache: true
+        push: true
+        tags: ${{ needs.image_name.outputs.container_image_name }}, ${{ env.registry }}/${{ env.image }}:latest
 
   deploy:
-    name: 'Deploy to Infrastructure'
-    needs: build
+    name: "Deploy to Infrastructure"
+    needs: [ image_name, build ]
     runs-on: ubuntu-latest
-    environment: production
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
         working-directory: "./terraform"
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
 
@@ -71,8 +65,8 @@ jobs:
       run: terraform init
 
     # Checks that all Terraform configuration files adhere to a canonical format
-    #- name: Terraform Format
-    #  run: terraform fmt -check
+    - name: Terraform Format
+      run: terraform fmt -check
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
@@ -84,7 +78,7 @@ jobs:
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
         TF_VAR_twitter_stream_rules: ${{ secrets.TWITTER_STREAM_RULES }}
-        TF_VAR_container_image_name: ${{ needs.build.outputs.container_image_name }}
+        TF_VAR_container_image_name: ${{ needs.image_name.outputs.container_image_name }}
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
@@ -97,4 +91,4 @@ jobs:
         TF_VAR_discord_webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
         TF_VAR_twitter_bearer_token: ${{ secrets.TWITTER_BEARER_TOKEN }}
         TF_VAR_twitter_stream_rules: ${{ secrets.TWITTER_STREAM_RULES }}
-        TF_VAR_container_image_name: ${{ needs.build.outputs.container_image_name }}
+        TF_VAR_container_image_name: ${{ needs.image_name.outputs.container_image_name }}
