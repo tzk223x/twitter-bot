@@ -97,7 +97,8 @@ resource "aws_ecs_task_definition" "twitter_bot" {
       "options": {
         "awslogs-group": "twitter-bot",
         "awslogs-region": "us-west-2",
-        "awslogs-stream-prefix": "ecs"
+        "awslogs-stream-prefix": "ecs",
+        "awslogs-create-group": "true"
       }
     },
     "essential": true
