@@ -17,7 +17,13 @@ terraform {
 
 provider "aws" {
   region = "${var.aws_region}"
+  access_key = "${var.aws_access_key_id}"
+  secret_key = "${var.aws_secret_access_key}"
 }
+
+###########
+# Secrets #
+###########
 
 resource "aws_secretsmanager_secret" "secret_discord_webhook_url" {
   name_prefix = "discord_webhook_url"
@@ -35,6 +41,14 @@ resource "aws_secretsmanager_secret" "secret_twitter_bearer_token" {
 resource "aws_secretsmanager_secret_version" "secret_version_twitter_bearer_token" {
   secret_id     = aws_secretsmanager_secret.secret_twitter_bearer_token.id
   secret_string = var.twitter_bearer_token
+}
+
+############################
+# Container Infrastructure #
+############################
+
+resource "aws_ecs_cluster" "twitter_bot_cluster" {
+  name = "twitter_bot_cluster"
 }
 
 resource "aws_ecs_service" "twitter_bot_service" {
@@ -69,6 +83,11 @@ resource "aws_ecs_task_definition" "twitter_bot" {
   network_mode             = "awsvpc"
   cpu                      = 256
   memory                   = 512
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
+  execution_role_arn = aws_iam_role.twitter_bot_task_execution_role.arn
   container_definitions    = <<TASK_DEFINITION
 [
   {
@@ -104,18 +123,11 @@ resource "aws_ecs_task_definition" "twitter_bot" {
   }
 ]
 TASK_DEFINITION
-
-  runtime_platform {
-    operating_system_family = "LINUX"
-    cpu_architecture        = "X86_64"
-  }
-  execution_role_arn = aws_iam_role.twitter_bot_task_execution_role.arn
 }
 
-resource "aws_iam_role" "twitter_bot_task_execution_role" {
-  name               = "twitter-bot-task-execution-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
-}
+#####################
+# ROLES AND POLICES #
+#####################
 
 data "aws_iam_policy_document" "ecs_task_assume_role" {
   statement {
@@ -128,6 +140,11 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
   }
 }
 
+resource "aws_iam_role" "twitter_bot_task_execution_role" {
+  name               = "twitter-bot-task-execution-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_task_assume_role.json
+}
+
 data "aws_iam_policy" "ecs_task_execution_role" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
@@ -137,15 +154,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role" {
   policy_arn = data.aws_iam_policy.ecs_task_execution_role.arn
 }
 
-resource "aws_ecs_cluster" "twitter_bot_cluster" {
-  name = "twitter_bot_cluster"
-}
-
 resource "aws_iam_role_policy" "twitter_bot_get_secret_policy" {
   name = "twitter-bot-get-secret-policy"
   role = "${aws_iam_role.twitter_bot_task_execution_role.id}"
 
-  policy = <<EOF
+  policy = <<POLICY_STATEMENT
 {
     "Version": "2012-10-17",
     "Statement": [{
@@ -157,7 +170,7 @@ resource "aws_iam_role_policy" "twitter_bot_get_secret_policy" {
         ]
     }]
 }
-EOF
+POLICY_STATEMENT
 }
 
 resource "aws_iam_role_policy_attachment" "test_instance_profile" {
