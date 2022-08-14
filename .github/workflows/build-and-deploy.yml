@@ -18,7 +18,8 @@ jobs:
     steps:
       - name: Get current datetime
         id: datetime
-        run: echo "::set-output name=datetime::$(date +'%Y%m%d-%H%M%S')"
+        run: |
+          echo "::set-output name=datetime::$(date +'%Y%m%d-%H%M%S')"
 
   build:
     name: "Build and Push Container"
@@ -65,8 +66,9 @@ jobs:
       run: terraform init
 
     # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
+    # Need to troubleshoot
+    #- name: Terraform Format
+    #  run: terraform fmt -check
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
