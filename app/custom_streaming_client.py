@@ -7,10 +7,12 @@ from tweepy import StreamingClient
 class CustomStreamingClient(StreamingClient):
     """Custom streaming client class based of tweepy StreamingClient class"""
 
-    def __init__(self, bearer_token, discord_webhook, tweepy_client):
+    def __init__(self, bearer_token, discord_webhook, discord_webhook_avatar_url, discord_webhook_username, tweepy_client):
         """override constructor to include discord webhook and tweepy client attributes"""
         super().__init__(bearer_token)
         self.discord_webhook = discord_webhook
+        self.discord_webhook_avatar_url = discord_webhook_avatar_url
+        self.discord_webhook_username = discord_webhook_username
         self.tweepy_client = tweepy_client
 
     def on_tweet(self, tweet):
@@ -36,21 +38,19 @@ class CustomStreamingClient(StreamingClient):
         tweet_author_username = tweet_author_user[0]["username"]
         logging.debug({ "tweet_author_username": tweet_author_username })
 
-        discord_webhook_username = "twitter-bot"
-        discord_webhook_avatar_url = ""
         discord_webhook_content = f"{str(tweet_author_username)} "\
             f"tweeted at {tweet_datetime_pt_string}: {tweet_link}"
         logging.info(
             {
-                "discord_webhook_username": discord_webhook_username,
-                "discord_webhook_avatar_url": discord_webhook_avatar_url,
+                "discord_webhook_username": self.discord_webhook_username,
+                "discord_webhook_avatar_url": self.discord_webhook_avatar_url,
                 "discord_webhook_content": discord_webhook_content
             }
         )
 
         logging.info("Sending message with Discord webhook...")
         self.discord_webhook.send(
-            username=discord_webhook_username,
-            avatar_url=discord_webhook_avatar_url,
+            username=self.discord_webhook_username,
+            avatar_url=self.discord_webhook_avatar_url,
             content=discord_webhook_content
         )

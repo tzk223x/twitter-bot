@@ -13,9 +13,17 @@ variable "aws_secret_access_key" {
   sensitive = true
 }
 
+variable "discord_webhook_avatar_url" {
+  type = string
+}
+
 variable "discord_webhook_url" {
   type = string
   sensitive = true
+}
+
+variable "discord_webhook_username" {
+  type = string
 }
 
 variable "twitter_bearer_token" {

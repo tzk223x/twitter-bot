@@ -14,8 +14,18 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter
 )
 parser.add_argument(
+    "--discord-webhook-avatar-url",
+    help="Discord webhook avatar URL",
+    type=str
+)
+parser.add_argument(
     "--discord-webhook-url",
     help="Discord webhook URL",
+    type=str
+)
+parser.add_argument(
+    "--discord-webhook-username",
+    help="Discord webhook username",
     type=str
 )
 parser.add_argument(
@@ -51,10 +61,20 @@ logger.addHandler(console_handler)
 
 load_dotenv()
 
+if args.discord_webhook_avatar_url:
+    DISCORD_WEBHOOK_AVATAR_URL = args.discord_webhook_avatar_url
+else:
+    DISCORD_WEBHOOK_AVATAR_URL = os.getenv('DISCORD_WEBHOOK_AVATAR_URL')
+
 if args.discord_webhook_url:
     DISCORD_WEBHOOK_URL = args.discord_webhook_url
 else:
     DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL')
+
+if args.discord_webhook_url:
+    DISCORD_WEBHOOK_USERNAME = args.discord_webhook_username
+else:
+    DISCORD_WEBHOOK_USERNAME = os.getenv('DISCORD_WEBHOOK_USERNAME')
 
 if args.twitter_bearer_token:
     TWITTER_BEARER_TOKEN = args.twitter_bearer_token
@@ -66,7 +86,7 @@ if args.twitter_stream_rules:
 else:
     TWITTER_STREAM_RULES = os.getenv('TWITTER_STREAM_RULES')
 
-def main(discord_webhook_url, twitter_bearer_token, twitter_stream_rules):
+def main(discord_webhook_avatar_url, discord_webhook_url, discord_webhook_username, twitter_bearer_token, twitter_stream_rules):
     """Main routine"""
 
     logging.info("Creating Discord webhook...")
@@ -75,7 +95,7 @@ def main(discord_webhook_url, twitter_bearer_token, twitter_stream_rules):
     logging.info("Creating Tweepy streaming client...")
     tweepy_client = tweepy.Client(twitter_bearer_token)
     tweepy_streaming_client = CustomStreamingClient(twitter_bearer_token,
-        discord_webhook, tweepy_client)
+        discord_webhook, discord_webhook_avatar_url, discord_webhook_username, tweepy_client)
 
     logging.info("Clearing all rules attached to account...")
     rules = tweepy_streaming_client.get_rules()
@@ -99,4 +119,4 @@ def main(discord_webhook_url, twitter_bearer_token, twitter_stream_rules):
     tweepy_streaming_client.filter(tweet_fields=["created_at"], expansions="author_id")
 
 if __name__ == "__main__":
-    main(DISCORD_WEBHOOK_URL, TWITTER_BEARER_TOKEN, TWITTER_STREAM_RULES)
+    main(DISCORD_WEBHOOK_AVATAR_URL, DISCORD_WEBHOOK_URL, DISCORD_WEBHOOK_USERNAME, TWITTER_BEARER_TOKEN, TWITTER_STREAM_RULES)
