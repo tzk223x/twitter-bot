@@ -37,7 +37,7 @@ resource "aws_secretsmanager_secret_version" "secret_version_twitter_bearer_toke
   secret_string = var.twitter_bearer_token
 }
 
-resource "aws_ecs_service" "twitter_bot" {
+resource "aws_ecs_service" "twitter_bot_service" {
   name            = "twitter-bot"
   cluster         = aws_ecs_cluster.app.id
   desired_count   = 1
@@ -59,10 +59,9 @@ resource "aws_ecs_service" "twitter_bot" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "twitter_bot" {
+resource "aws_cloudwatch_log_group" "twitter_bot_log_group" {
   name = "/ecs/twitter-bot"
 }
-
 
 resource "aws_ecs_task_definition" "twitter_bot" {
   family                   = "twitter-bot"
@@ -93,6 +92,14 @@ resource "aws_ecs_task_definition" "twitter_bot" {
         "valueFrom": "${aws_secretsmanager_secret_version.secret_version_twitter_bearer_token.arn}"
       }
     ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${aws_cloudwatch_log_group.twitter_bot_log_group.name}",
+        "awslogs-region": "eu-central-1",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
     "essential": true
   }
 ]
