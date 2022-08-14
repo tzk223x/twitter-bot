@@ -99,7 +99,7 @@ resource "aws_ecs_task_definition" "twitter_bot" {
         "awslogs-region": "us-west-2",
         "awslogs-stream-prefix": "ecs"
       }
-    }
+    },
     "essential": true
   }
 ]
