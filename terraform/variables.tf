@@ -15,3 +15,8 @@ variable "twitter_stream_rules" {
 variable "container_image_name" {
   type = string
 }
+
+variable "aws_region" {
+  default = "us-west-2"
+  type = string
+}
