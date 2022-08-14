@@ -2,7 +2,7 @@ terraform {
   cloud {
     organization = "tzk223"
     workspaces {
-      name = "Example-Workspace"
+      name = "twitter-bot"
     }
   }
   required_providers {
@@ -16,7 +16,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = "${var.aws_region}"
 }
 
 resource "aws_secretsmanager_secret" "secret_discord_webhook_url" {
@@ -39,7 +39,7 @@ resource "aws_secretsmanager_secret_version" "secret_version_twitter_bearer_toke
 
 resource "aws_ecs_service" "twitter_bot_service" {
   name            = "twitter-bot"
-  cluster         = aws_ecs_cluster.app.id
+  cluster         = aws_ecs_cluster.twitter_bot_cluster.id
   desired_count   = 1
   task_definition = aws_ecs_task_definition.twitter_bot.arn
   launch_type     = "FARGATE"
@@ -95,10 +95,9 @@ resource "aws_ecs_task_definition" "twitter_bot" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "twitter-bot",
-        "awslogs-region": "us-west-2",
-        "awslogs-stream-prefix": "ecs",
-        "awslogs-create-group": "true"
+        "awslogs-group": "${aws_cloudwatch_log_group.twitter_bot_log_group.name}",
+        "awslogs-region": "${var.aws_region}",
+        "awslogs-stream-prefix": "twitter-bot"
       }
     },
     "essential": true
@@ -138,12 +137,12 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role" {
   policy_arn = data.aws_iam_policy.ecs_task_execution_role.arn
 }
 
-resource "aws_ecs_cluster" "app" {
-  name = "app"
+resource "aws_ecs_cluster" "twitter_bot_cluster" {
+  name = "twitter_bot_cluster"
 }
 
-resource "aws_iam_role_policy" "test_secretmanager_policy" {
-  name = "test_secretmanager_policy"
+resource "aws_iam_role_policy" "twitter_bot_get_secret_policy" {
+  name = "twitter-bot-get-secret-policy"
   role = "${aws_iam_role.twitter_bot_task_execution_role.id}"
 
   policy = <<EOF
