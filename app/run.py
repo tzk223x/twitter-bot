@@ -25,8 +25,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--twitter-stream-rules",
-    default="genshin -is:retweet -is:reply has:media",
-    help="Twitter filtered stream rules (https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/integrate/build-a-rule)",
+    help="Twitter filtered stream rules",
     type=str
 )
 parser.add_argument(
@@ -100,6 +99,4 @@ def main(discord_webhook_url, twitter_bearer_token, twitter_stream_rules):
     tweepy_streaming_client.filter(tweet_fields=["created_at"], expansions="author_id")
 
 if __name__ == "__main__":
-    #STREAM_RULE_VALUES=["genshin -is:retweet -is:reply has:media"]
-    #STREAM_RULE_VALUES=["from:GenshinImpact -is:retweet -is:reply"]
     main(DISCORD_WEBHOOK_URL, TWITTER_BEARER_TOKEN, TWITTER_STREAM_RULES)
