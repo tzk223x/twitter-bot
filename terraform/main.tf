@@ -74,7 +74,7 @@ resource "aws_ecs_task_definition" "twitter_bot" {
 [
   {
     "name": "twitter-bot",
-    "image": "${var.container_image}",
+    "image": "${var.container_image_name}",
     "cpu": 256,
     "memory": 512,
     "environment": [
