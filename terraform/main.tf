@@ -95,8 +95,8 @@ resource "aws_ecs_task_definition" "twitter_bot" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.twitter_bot_log_group.name}",
-        "awslogs-region": "eu-central-1",
+        "awslogs-group": "twitter-bot",
+        "awslogs-region": "us-west-2",
         "awslogs-stream-prefix": "ecs"
       }
     }
