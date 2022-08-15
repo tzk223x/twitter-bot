@@ -97,6 +97,14 @@ resource "aws_ecs_task_definition" "twitter_bot" {
     "memory": 512,
     "environment": [
       {
+        "name": "DISCORD_WEBHOOK_AVATAR_URL",
+        "value": "${var.discord_webhook_avatar_url}"
+      },
+      {
+        "name": "DISCORD_WEBHOOK_USERNAME",
+        "value": "${var.discord_webhook_username}"
+      },
+      {
         "name": "TWITTER_STREAM_RULES",
         "value": "${var.twitter_stream_rules}"
       }
