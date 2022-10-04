@@ -77,4 +77,3 @@ from:GenshinImpact -is:retweet -is:reply
 
 ```
 genshin -is:retweet -is:reply has:media
-```
