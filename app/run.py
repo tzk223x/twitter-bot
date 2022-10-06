@@ -3,7 +3,7 @@
 import argparse
 import logging
 import os
-from discord import Webhook, RequestsWebhookAdapter
+from discord import SyncWebhook
 from dotenv import load_dotenv
 import tweepy
 from custom_streaming_client import CustomStreamingClient
@@ -90,7 +90,7 @@ def main(discord_webhook_avatar_url, discord_webhook_url, discord_webhook_userna
     """Main routine"""
 
     logging.info("Creating Discord webhook...")
-    discord_webhook = Webhook.from_url(discord_webhook_url, adapter=RequestsWebhookAdapter())
+    discord_webhook = SyncWebhook.from_url(discord_webhook_url)
 
     logging.info("Creating Tweepy streaming client...")
     tweepy_client = tweepy.Client(twitter_bearer_token)
