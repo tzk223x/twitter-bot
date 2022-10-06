@@ -6,9 +6,10 @@ This repository utilizes the following:
 - Python 3: language used to write the application
 - [Tweepy](https://www.tweepy.org/): library to access the Twitter API
 - [Discord.py](https://discordpy.readthedocs.io/en/stable/): library to access the Discord API
+- [Docker](https://docs.docker.com/): technology used to containerize application
 - [Terraform](https://www.terraform.io/docs): tool to define and manage infrastructure
-- [Terraform Cloud](https://www.terraform.io/cloud-docs): tool used as an environment to run terraform actions
-- Amazon Web Services: platform on which to host the application
+- [Terraform Cloud](https://www.terraform.io/cloud-docs): tool used as an environment to run Terraform actions
+- [Amazon Web Services](https://aws.amazon.com/): platform on which to host the application
 
 ## Local Development
 
@@ -16,9 +17,9 @@ This repository utilizes the following:
 
 Do the following to run the application locally.
 
-1. If using [Visual Studio Code](https://code.visualstudio.com/), install the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension and [Docker Desktop](https://www.docker.com/products/docker-desktop/) to take advantage of the provided development container configuration files define in the "/.devcontainer/" directory.
+1. If using [Visual Studio Code](https://code.visualstudio.com/), install the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension and [Docker Desktop](https://www.docker.com/products/docker-desktop/) to take advantage of the provided development container configuration files defined in the "/.devcontainer/" directory.
 
-1. Create a file called .env at root of project with desired environment variables
+1. Create a file called ".env" at root of project with desired environment variables
 
     ```
     #.env
@@ -63,7 +64,7 @@ Do the following to deploy the application to AWS with Terraform running locally
 
 ## Using GitHub Workflow
 
-These secrets need to be set in GitHub in order to use GitHub Workflow to automatically update the application and infrastructure upon commit to main without depending on any local resources. The workflow is defined in the "/.github/workflows/" directory.
+These secrets need to be set in GitHub in order to use GitHub Workflow to automatically update the application and infrastructure upon commit to main without depending on local resources. The workflow is defined in the "/.github/workflows/" directory.
 
 ### Secrets
 
@@ -83,9 +84,9 @@ A list of secrets needed to build and deploy:
 
 ## Use of Twitter Stream Rules
 
-These are the example stream rules
+These are the example stream rules.
 
-- Production
+### Production
 
 Filters for tweets from the account GenshinImpact that are not retweets and are not replies. 
 
@@ -93,7 +94,7 @@ Filters for tweets from the account GenshinImpact that are not retweets and are 
 from:GenshinImpact -is:retweet -is:reply
 ```
 
-- Development
+### Development
 
 Filters for tweets with the keyword "genshin" that are not retweets and has media attached.
 
